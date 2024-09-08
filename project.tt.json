@@ -1,0 +1,9 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "nine-rent",
+  "appid": "testAppId",
+  "setting": {
+    "es6": false,
+    "minified": false
+  }
+}
