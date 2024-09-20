@@ -1,3 +1,4 @@
+import { navigateTo } from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
 import { data } from "./data";
 import styles from "./styles.module.less";
@@ -33,10 +34,21 @@ export default function Index() {
     return objStyle;
   };
 
+  const handleClick = (key: string) => {
+    navigateTo({
+      url: `/pages/detail/index?key=${key}`,
+    });
+  };
+
   return (
     <View className={styles.index}>
       {data.map(({ key, cover, text, avatar, like }, index) => (
-        <View key={key} style={calcStyle(index)} className={styles.item}>
+        <View
+          key={key}
+          style={calcStyle(index)}
+          className={styles.item}
+          onClick={() => handleClick(key)}
+        >
           <Image src={cover} style={clacImgStyle(index)} />
           <View className={styles["item-text"]}>{text}</View>
           <View className={styles["item-user"]}>
