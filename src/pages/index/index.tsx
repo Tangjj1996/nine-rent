@@ -1,5 +1,7 @@
 import { navigateTo } from "@tarojs/taro";
 import { View, Image } from "@tarojs/components";
+import heart from "@/assets/icon/heart.svg";
+import heartFill from "@/assets/icon/heart-fill.svg";
 import { data } from "./data";
 import styles from "./styles.module.less";
 
@@ -42,7 +44,7 @@ export default function Index() {
 
   return (
     <View className={styles.index}>
-      {data.map(({ key, cover, text, avatar, like }, index) => (
+      {data.map(({ key, cover, text, avatar, isLiked, like_count }, index) => (
         <View
           key={key}
           style={calcStyle(index)}
@@ -56,7 +58,13 @@ export default function Index() {
               src={avatar}
               style={{ width: 20, height: 20, borderRadius: "50%" }}
             />
-            <View>{like}</View>
+            <View className={styles["item-user-like"]}>
+              <Image
+                src={isLiked ? heartFill : heart}
+                style={{ width: 20, height: 20, borderRadius: "50%" }}
+              />
+              {like_count}
+            </View>
           </View>
         </View>
       ))}
