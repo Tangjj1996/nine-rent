@@ -55,6 +55,7 @@
     "@tarojs/runtime": "3.6.30",
     "@tarojs/shared": "3.6.30",
     "@tarojs/taro": "3.6.30",
+    "immer": "^10.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "zustand": "5.0.0-rc.2"
