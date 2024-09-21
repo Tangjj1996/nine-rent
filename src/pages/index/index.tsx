@@ -1,28 +1,47 @@
-import { navigateTo } from "@tarojs/taro";
+import { useState } from "react";
+import { navigateTo, useLoad } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
-import { data } from "./data";
+import { getList } from "@/service/hourse/getList";
+import { exceptionBiz } from "@/lib/utils";
+import { ListData } from "@/service/hourse/List";
 import styles from "./styles.module.less";
 
 export default function Index() {
+  const [data, setData] = useState<ListData[]>([]);
+
+  useLoad(async () => {
+    try {
+      const {
+        data: { data: listData },
+      } = (await getList()) || {};
+      setData(listData);
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  });
+
   const calcStyle = (index: number): React.CSSProperties => {
     const objStyle: React.CSSProperties = {};
 
     if (index === 0) {
       objStyle.height = 200;
-      return objStyle;
+    } else {
+      objStyle.height = 300;
     }
 
-    if (index % 2 === 0) {
+    if (index % 2 === 0 && index !== 0) {
       objStyle.transform = `translateY(-100px)`;
     }
 
     if (index === data.length - 1 && index % 2 === 0) {
+      if (!objStyle.transform) {
+        objStyle.transform = "";
+      }
       objStyle.transform += `translateX(-105px)`;
     }
 
-    objStyle.height = 300;
     return objStyle;
   };
 
