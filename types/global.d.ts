@@ -33,11 +33,11 @@ declare namespace NodeJS {
      */
     TARO_APP_ID: string;
   }
+}
 
-  interface Api<T> {
-    code: number;
-    msg: string;
-    data: T;
-    traceId: string;
-  }
+declare interface Api<T> {
+  code: number;
+  msg: string;
+  data: T;
+  traceId: string;
 }
