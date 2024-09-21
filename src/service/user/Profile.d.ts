@@ -1,7 +1,8 @@
 export interface ProfileReq {}
 
-export interface ProfileRes {
+export interface ProfileData {
   nick_name: string;
   avatar: string;
-  phone_number: string;
+  house_info_address: string;
+  house_info_id: number;
 }

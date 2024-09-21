@@ -1,9 +1,25 @@
 import { useState } from "react";
+import { useDidShow } from "@tarojs/taro";
 import { View, Image, Input, Button } from "@tarojs/components";
+import { getProfile } from "@/service/user/getProfile";
+import { exceptionBiz } from "@/lib/utils";
+import { ProfileData } from "@/service/user/Profile";
 import styles from "./styles.module.less";
 
 export default function Mine() {
+  const [profile, setProfile] = useState<ProfileData>();
   const [isShowBtn, setShowBtn] = useState(false);
+
+  useDidShow(async () => {
+    try {
+      const {
+        data: { data },
+      } = (await getProfile()) || {};
+      setProfile(data);
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  });
 
   // 保存
   const hanldeSave = async () => {
@@ -20,12 +36,12 @@ export default function Mine() {
       <View className={styles.user}>
         <Image
           style={{ width: 100, height: 100, borderRadius: "50%" }}
-          // https://sns-avatar-qc.xhscdn.com/avatar/cd255d0e201935e0d852bd371f18c198.jpg?imageView2/2/w/120/format/jpg|imageMogr2/strip
-          src="https://sns-avatar-qc.xhscdn.com/avatar/1040g2jo310h0v19f6k505nj20u2g91rsgq91350?imageView2/2/w/120/format/jpg|imageMogr2/strip"
+          src={profile?.avatar!}
         />
         <View className={styles["user-input"]}>
-          <Input
-            defaultValue="顾建杰"
+          <View>{profile?.nick_name}</View>
+          {/* <Input
+            defaultValue={profile?.nick_name}
             onBlur={() => setShowBtn(true)}
             style={{ width: 100, height: 40 }}
           />
@@ -38,7 +54,7 @@ export default function Mine() {
                 取消
               </Button>
             </View>
-          )}
+          )} */}
         </View>
       </View>
       <View className={styles.list}>
