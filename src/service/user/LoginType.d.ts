@@ -2,4 +2,6 @@ export interface LoginReq {
   code: string;
 }
 
-export interface LoginData {}
+export interface LoginData {
+  openid: string;
+}
