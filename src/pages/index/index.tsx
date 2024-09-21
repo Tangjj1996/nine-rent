@@ -76,7 +76,7 @@ export default function Index() {
   return (
     <View className={styles.index}>
       {data.map(
-        ({ key, cover, text, avatar, author, isLiked, like_count }, index) => (
+        ({ key, cover, text, avatar, author, is_liked, like_count }, index) => (
           <View
             key={key}
             style={calcStyle(index)}
@@ -98,7 +98,7 @@ export default function Index() {
                 onClick={(e) => handleLiked(e, key)}
               >
                 <Image
-                  src={isLiked ? heartFill : heart}
+                  src={is_liked ? heartFill : heart}
                   style={{ width: 20, height: 20, borderRadius: "50%" }}
                 />
                 {like_count}

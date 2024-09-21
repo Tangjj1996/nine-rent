@@ -8,5 +8,5 @@ export interface ListData {
   key: string;
   like_count: number;
   text: string;
-  isLiked: boolean;
+  is_liked: boolean;
 }
