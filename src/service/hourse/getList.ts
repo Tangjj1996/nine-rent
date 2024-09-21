@@ -1,9 +1,10 @@
 import { request } from "@/lib/request";
-import { ListData } from "./List";
+import { ListData, ListReq } from "./List";
 
-export const getList = () => {
-  return request<Api<ListData[]>>({
+export const getList = (data: ListReq) => {
+  return request<Api<ListData>>({
     url: "/house/getList",
     method: "GET",
+    data,
   });
 };

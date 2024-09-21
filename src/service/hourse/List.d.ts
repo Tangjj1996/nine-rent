@@ -1,6 +1,9 @@
-export interface ListReq {}
+export interface ListReq {
+  current: number;
+  page_size: number;
+}
 
-export interface ListData {
+export interface ListPageData {
   author: string;
   avatar: string;
   cover: string;
@@ -9,4 +12,9 @@ export interface ListData {
   like_count: number;
   text: string;
   is_liked: boolean;
+}
+
+export interface ListData {
+  list: ListPageData[];
+  total: number;
 }

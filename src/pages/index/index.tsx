@@ -9,13 +9,13 @@ import { ListData } from "@/service/hourse/List";
 import styles from "./styles.module.less";
 
 export default function Index() {
-  const [data, setData] = useState<ListData[]>([]);
+  const [data, setData] = useState<ListData>();
 
   useLoad(async () => {
     try {
       const {
         data: { data: listData },
-      } = (await getList()) || {};
+      } = (await getList({ current: 1, page_size: 10 })) || {};
       setData(listData);
     } catch (e) {
       exceptionBiz(e);
@@ -35,7 +35,7 @@ export default function Index() {
       objStyle.transform = `translateY(-100px)`;
     }
 
-    if (index === data.length - 1 && index % 2 === 0) {
+    if (index === data?.list.length! - 1 && index % 2 === 0) {
       if (!objStyle.transform) {
         objStyle.transform = "";
       }
@@ -75,7 +75,7 @@ export default function Index() {
 
   return (
     <View className={styles.index}>
-      {data.map(
+      {data?.list?.map(
         ({ key, cover, text, avatar, author, is_liked, like_count }, index) => (
           <View
             key={key}
