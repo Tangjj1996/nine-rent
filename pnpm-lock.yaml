@@ -53,12 +53,21 @@ dependencies:
   '@tarojs/taro':
     specifier: 3.6.30
     version: 3.6.30(@tarojs/helper@3.6.30)(@tarojs/runtime@3.6.30)(@types/react@18.3.5)(postcss@8.4.45)
+  immer:
+    specifier: ^10.1.1
+    version: 10.1.1
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   react:
     specifier: ^18.0.0
     version: 18.3.1
   react-dom:
     specifier: ^18.0.0
     version: 18.3.1(react@18.3.1)
+  zustand:
+    specifier: 5.0.0-rc.2
+    version: 5.0.0-rc.2(@types/react@18.3.5)(immer@10.1.1)(react@18.3.1)
 
 devDependencies:
   '@babel/core':
@@ -82,6 +91,9 @@ devDependencies:
   '@types/jest':
     specifier: ^29.3.1
     version: 29.5.12
+  '@types/lodash':
+    specifier: ^4.17.7
+    version: 4.17.7
   '@types/node':
     specifier: ^18.15.11
     version: 18.19.50
@@ -8090,6 +8102,10 @@ packages:
     dev: true
     optional: true
 
+  /immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+    dev: false
+
   /immutable@4.3.7:
     resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
     dev: true
@@ -13708,3 +13724,26 @@ packages:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
+
+  /zustand@5.0.0-rc.2(@types/react@18.3.5)(immer@10.1.1)(react@18.3.1):
+    resolution: {integrity: sha512-o2Nwuvnk8vQBX7CcHL8WfFkZNJdxB/VKeWw0tNglw8p4cypsZ3tRT7rTRTDNeUPFS0qaMBRSKe+fVwL5xpcE3A==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+    dependencies:
+      '@types/react': 18.3.5
+      immer: 10.1.1
+      react: 18.3.1
+    dev: false
