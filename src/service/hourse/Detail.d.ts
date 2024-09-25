@@ -1,4 +1,6 @@
-export interface DetailReq {}
+export interface DetailReq {
+  id: number;
+}
 
 export interface DetailData {
   key: string;

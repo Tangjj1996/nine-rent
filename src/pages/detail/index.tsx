@@ -1,24 +1,25 @@
 import { useState } from "react";
-import { useLoad, request, showToast } from "@tarojs/taro";
+import { useLoad } from "@tarojs/taro";
 import { View } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
+import { exceptionBiz } from "@/lib/utils";
+import { DetailData } from "@/service/hourse/Detail";
 
 export default function Mine() {
-  const [detail, setDetail] = useState([]);
+  const [detail, setDetail] = useState<DetailData>();
 
-  useLoad((param) => {
-    const { key } = param;
+  useLoad(async (param) => {
+    try {
+      const { id } = param;
 
-    getDetail({
-      key,
-    })
-      .then((res) => {
-        setDetail(res);
-      })
-      .catch((_e) => {
-        showToast({ title: "网络错误", icon: "error" });
-      });
+      const {
+        data: { data: detailData },
+      } = (await getDetail({ id })) || {};
+      setDetail(detailData);
+    } catch (e) {
+      exceptionBiz(e);
+    }
   });
 
-  return <View>Min2</View>;
+  return <View>{detail?.like_count}</View>;
 }

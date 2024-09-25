@@ -107,11 +107,11 @@ export default function Index() {
 
   /**
    * 跳转详情
-   * @param key
+   * @param id
    */
-  const handleClick = (key: string) => {
+  const handleClick = (id: number) => {
     navigateTo({
-      url: `/pages/detail/index?key=${key}`,
+      url: `/pages/detail/index?id=${id}`,
     });
   };
 
@@ -178,7 +178,7 @@ export default function Index() {
             key={key}
             style={calcStyle(index)}
             className={styles.item}
-            onClick={() => handleClick(key)}
+            onClick={() => handleClick(id)}
           >
             <Image src={cover} style={clacImgStyle(index)} />
             <View className={styles["item-text"]}>{text}</View>
