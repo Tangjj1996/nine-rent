@@ -17,4 +17,6 @@ export interface ListPageData {
 export interface ListData {
   list: ListPageData[];
   total: number;
+  current: number;
+  page_size: number;
 }
