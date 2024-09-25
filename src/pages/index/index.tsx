@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { produce } from "immer";
-import { navigateTo, useLoad, useReachBottom } from "@tarojs/taro";
+import {
+  navigateTo,
+  useLoad,
+  useReachBottom,
+  login,
+  getStorageSync,
+  setStorageSync,
+} from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { exceptionBiz } from "@/lib/utils";
+import { LocalStorageKey } from "@/enums";
+import { getLogin } from "@/service/user/login";
 import { ListData } from "@/service/hourse/List";
 import styles from "./styles.module.less";
 
@@ -48,6 +57,11 @@ export default function Index() {
 
   useLoad(async () => {
     try {
+      if (!getStorageSync(LocalStorageKey.openId)) {
+        const { code } = (await login()) || {};
+        const { data: loginData } = (await getLogin({ code })) || {};
+        setStorageSync(LocalStorageKey.openId, loginData.data.openid);
+      }
       setPageInfo({ loading: true, isNextLoading: false, hasMore: false });
       const {
         data: { data: listData },
