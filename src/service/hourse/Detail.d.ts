@@ -3,11 +3,17 @@ export interface DetailReq {
 }
 
 export interface DetailData {
+  id: number;
   key: string;
-  text: string;
   cover: string;
-  avatar: string;
+  title: string;
+  content: string;
   like_count: number;
-  author: string;
-  isLiked: boolean;
+  collection_count: number;
+  avatar: string;
+  nick_name: string;
+  is_liked: boolean;
+  is_collection: boolean;
+  swiper: string[];
+  tags: string[];
 }
