@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { navigateTo, useLoad } from "@tarojs/taro";
+import { navigateTo, useLoad, useReachBottom } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
@@ -10,15 +10,59 @@ import styles from "./styles.module.less";
 
 export default function Index() {
   const [data, setData] = useState<ListData>();
+  const [pageInfo, setPageInfo] = useState({
+    loading: false,
+    isNextLoading: false,
+    hasMore: false,
+  });
+
+  useReachBottom(async () => {
+    if (!pageInfo.hasMore) return;
+    try {
+      setPageInfo((state) => ({ ...state, isNextLoading: true }));
+      const {
+        data: { data: listData },
+      } = await getList({
+        current: data?.current! + 1,
+        page_size: data?.page_size!,
+      });
+      setData((state) => ({
+        current: listData.current,
+        page_size: listData.page_size,
+        total: listData.total,
+        list: state?.list.concat(listData.list) ?? [],
+      }));
+      setPageInfo((state) => ({
+        ...state,
+        hasMore:
+          (data?.list.length ?? 0) + listData.list.length < listData.total,
+      }));
+    } catch (e) {
+      exceptionBiz(e);
+    } finally {
+      setPageInfo((state) => ({ ...state, isNextLoading: false }));
+    }
+  });
 
   useLoad(async () => {
     try {
+      setPageInfo({ loading: true, isNextLoading: false, hasMore: false });
       const {
         data: { data: listData },
       } = (await getList({ current: 1, page_size: 10 })) || {};
       setData(listData);
+      setPageInfo((state) => ({
+        ...state,
+        hasMore: listData.list.length < listData.total,
+      }));
     } catch (e) {
       exceptionBiz(e);
+    } finally {
+      setPageInfo((state) => ({
+        ...state,
+        loading: false,
+        isNextLoading: false,
+      }));
     }
   });
 
@@ -106,6 +150,12 @@ export default function Index() {
             </View>
           </View>
         )
+      )}
+      {pageInfo.hasMore && pageInfo.isNextLoading && (
+        <View className={styles.footer}>Loading</View>
+      )}
+      {!pageInfo.hasMore && !pageInfo.loading && (
+        <View className={styles.footer}>没有更多了～</View>
       )}
     </View>
   );
