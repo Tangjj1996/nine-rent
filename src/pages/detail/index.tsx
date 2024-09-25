@@ -11,7 +11,6 @@ export default function Mine() {
   useLoad(async (param) => {
     try {
       const { id } = param;
-
       const {
         data: { data: detailData },
       } = (await getDetail({ id })) || {};

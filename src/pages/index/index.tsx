@@ -171,7 +171,7 @@ export default function Index() {
     <View className={styles.index}>
       {data?.list?.map(
         (
-          { key, id, cover, text, avatar, author, is_liked, like_count },
+          { key, id, cover, title, avatar, nick_name, is_liked, like_count },
           index
         ) => (
           <View
@@ -181,14 +181,14 @@ export default function Index() {
             onClick={() => handleClick(id)}
           >
             <Image src={cover} style={clacImgStyle(index)} />
-            <View className={styles["item-text"]}>{text}</View>
+            <View className={styles["item-text"]}>{title}</View>
             <View className={styles["item-user"]}>
               <View className={styles["item-user-name"]}>
                 <Image
                   src={avatar}
                   style={{ width: 20, height: 20, borderRadius: "50%" }}
                 />
-                <View>{author}</View>
+                <View>{nick_name}</View>
               </View>
               <View
                 className={styles["item-user-like"]}
