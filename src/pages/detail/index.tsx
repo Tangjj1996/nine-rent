@@ -40,7 +40,9 @@ export default function Mine() {
       <View className={styles.content}>{detail?.content}</View>
       <View className={styles.tags}>
         {detail?.tags.map((text, index) => (
-          <View key={index}>{text}</View>
+          <View className={styles["tag-item"]} key={index}>
+            #{text}
+          </View>
         ))}
       </View>
       <View className={styles.footer}>
