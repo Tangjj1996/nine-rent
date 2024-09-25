@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { produce } from "immer";
 import { navigateTo, useLoad, useReachBottom } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
+import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { exceptionBiz } from "@/lib/utils";
 import { ListData } from "@/service/hourse/List";
 import styles from "./styles.module.less";
@@ -113,14 +115,65 @@ export default function Index() {
     });
   };
 
-  const handleLiked = (e: ITouchEvent, key: string) => {
+  /**
+   * 点赞
+   * @param e
+   * @param id
+   */
+  const handleLiked = async (e: ITouchEvent, id: number) => {
     e.stopPropagation();
+    try {
+      const {
+        data: { data: listData },
+      } = await postLike({ id });
+      setData(
+        produce(data, (draft) => {
+          draft?.list.forEach((item) => {
+            if (item.id === listData.id) {
+              item.is_liked = true;
+              item.like_count++;
+            }
+          });
+        })
+      );
+    } catch (err) {
+      exceptionBiz(err);
+    }
+  };
+
+  /**
+   * 取消点赞
+   * @param e
+   * @param id
+   */
+  const handleCancelLiked = async (e: ITouchEvent, id: number) => {
+    e.stopPropagation();
+    try {
+      const {
+        data: { data: listData },
+      } = await postCancelLike({ id });
+      setData(
+        produce(data, (draft) => {
+          draft?.list.forEach((item) => {
+            if (item.id === listData.id) {
+              item.is_liked = false;
+              item.like_count--;
+            }
+          });
+        })
+      );
+    } catch (err) {
+      exceptionBiz(err);
+    }
   };
 
   return (
     <View className={styles.index}>
       {data?.list?.map(
-        ({ key, cover, text, avatar, author, is_liked, like_count }, index) => (
+        (
+          { key, id, cover, text, avatar, author, is_liked, like_count },
+          index
+        ) => (
           <View
             key={key}
             style={calcStyle(index)}
@@ -139,7 +192,9 @@ export default function Index() {
               </View>
               <View
                 className={styles["item-user-like"]}
-                onClick={(e) => handleLiked(e, key)}
+                onClick={(e) => {
+                  is_liked ? handleCancelLiked(e, id) : handleLiked(e, id);
+                }}
               >
                 <Image
                   src={is_liked ? heartFill : heart}
