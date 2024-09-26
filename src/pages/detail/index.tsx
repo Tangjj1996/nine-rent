@@ -31,6 +31,7 @@ export default function Mine() {
         setDetail(
           produce(detail, (draft) => {
             draft.is_liked = true;
+            draft.like_count++;
           })
         );
       }
@@ -38,6 +39,7 @@ export default function Mine() {
       exceptionBiz(e);
     }
   };
+
   const handleCancelLike = async () => {
     if (typeof detail?.id !== "number") return;
     try {
@@ -48,6 +50,7 @@ export default function Mine() {
         setDetail(
           produce(detail, (draft) => {
             draft.is_liked = false;
+            draft.like_count--;
           })
         );
       }
@@ -55,6 +58,7 @@ export default function Mine() {
       exceptionBiz(e);
     }
   };
+
   const handleCollection = async () => {
     if (typeof detail?.id !== "number") return;
     try {
@@ -65,6 +69,7 @@ export default function Mine() {
         setDetail(
           produce(detail, (draft) => {
             draft.is_collection = true;
+            draft.collection_count++;
           })
         );
       }
@@ -72,6 +77,7 @@ export default function Mine() {
       exceptionBiz(e);
     }
   };
+
   const hanldeCancelCollection = async () => {
     if (typeof detail?.id !== "number") return;
     try {
@@ -82,6 +88,7 @@ export default function Mine() {
         setDetail(
           produce(detail, (draft) => {
             draft.is_collection = false;
+            draft.collection_count--;
           })
         );
       }
