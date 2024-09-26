@@ -130,7 +130,7 @@ export default function Index() {
    */
   const handleClick = (id: number) => {
     navigateTo({
-      url: `/pages/detail/index?id=${id}`,
+      url: `/pages/detail/index?id=${id}&type=${HouseType.like}`,
     });
   };
 
