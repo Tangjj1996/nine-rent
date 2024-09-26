@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
-import { useLoad } from "@tarojs/taro";
+import { useLoad, useShareAppMessage, showShareMenu } from "@tarojs/taro";
 import { produce } from "immer";
-import { View, Swiper, SwiperItem, Image } from "@tarojs/components";
+import { View, Swiper, SwiperItem, Image, Button } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
 import { exceptionBiz, prettyCount } from "@/lib/utils";
 import { DetailData } from "@/service/hourse/Detail";
@@ -24,6 +24,7 @@ import styles from "./styles.module.less";
 
 export default function Mine() {
   const parentType = useRef<HouseType>();
+  const idRef = useRef();
   const [detail, setDetail] = useState<DetailData>();
 
   const setParentData = ({
@@ -176,6 +177,7 @@ export default function Mine() {
   useLoad(async (param) => {
     try {
       const { id, type } = param;
+      idRef.current = id;
       if (type) {
         parentType.current = +type;
       }
@@ -186,6 +188,13 @@ export default function Mine() {
     } catch (e) {
       exceptionBiz(e);
     }
+  });
+
+  useShareAppMessage(() => {
+    return {
+      title: "精品租房，快来看一下吧~",
+      path: `/pages/detail/index?id=${idRef.current}`,
+    };
   });
 
   return (
@@ -230,12 +239,12 @@ export default function Mine() {
           />
           {prettyCount(detail?.collection_count)}
         </View>
-        <View className={styles["footer-forward"]}>
+        <Button className={styles["footer-forward"]} openType="share">
           <Image
             src={forward}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-        </View>
+        </Button>
       </View>
     </View>
   );
