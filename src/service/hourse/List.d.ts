@@ -1,16 +1,20 @@
+import { HouseType } from "./shared";
+
 export interface ListReq {
   current: number;
   page_size: number;
+  type?: HouseType;
 }
 
 export interface ListPageData {
-  author: string;
-  avatar: string;
-  cover: string;
   id: number;
   key: string;
+  cover: string;
+  title: string;
+  content: string;
   like_count: number;
-  text: string;
+  avatar: string;
+  nick_name: string;
   is_liked: boolean;
 }
 

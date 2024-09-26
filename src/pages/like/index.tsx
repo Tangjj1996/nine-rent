@@ -13,6 +13,7 @@ import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
+import { HouseType } from "@/service/hourse/shared";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { exceptionBiz } from "@/lib/utils";
 import { LocalStorageKey } from "@/enums";
@@ -38,6 +39,7 @@ export default function Index() {
       } = await getList({
         current: data?.current! + 1,
         page_size: data?.page_size!,
+        type: HouseType.like,
       });
       setData((state) => ({
         current: listData.current,
@@ -67,7 +69,9 @@ export default function Index() {
       setPageInfo({ loading: true, isNextLoading: false, hasMore: false });
       const {
         data: { data: listData },
-      } = (await getList({ current: 1, page_size: 10 })) || {};
+      } =
+        (await getList({ current: 1, page_size: 10, type: HouseType.like })) ||
+        {};
       setData(listData);
       setPageInfo((state) => ({
         ...state,
@@ -91,7 +95,11 @@ export default function Index() {
       const { current, page_size, total } = data || {};
       const {
         data: { data: listData },
-      } = await getList({ current: current ?? 1, page_size: page_size ?? 10 });
+      } = await getList({
+        current: current ?? 1,
+        page_size: page_size ?? 10,
+        type: HouseType.like,
+      });
       setData(
         produce(data, (draft) => {
           if (draft?.list) {

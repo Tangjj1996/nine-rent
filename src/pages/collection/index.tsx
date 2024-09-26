@@ -14,6 +14,7 @@ import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
+import { HouseType } from "@/service/hourse/shared";
 import { exceptionBiz } from "@/lib/utils";
 import { LocalStorageKey } from "@/enums";
 import { getLogin } from "@/service/user/login";
@@ -38,6 +39,7 @@ export default function Index() {
       } = await getList({
         current: data?.current! + 1,
         page_size: data?.page_size!,
+        type: HouseType.collection,
       });
       setData((state) => ({
         current: listData.current,
@@ -67,7 +69,12 @@ export default function Index() {
       setPageInfo({ loading: true, isNextLoading: false, hasMore: false });
       const {
         data: { data: listData },
-      } = (await getList({ current: 1, page_size: 10 })) || {};
+      } =
+        (await getList({
+          current: 1,
+          page_size: 10,
+          type: HouseType.collection,
+        })) || {};
       setData(listData);
       setPageInfo((state) => ({
         ...state,
@@ -91,7 +98,11 @@ export default function Index() {
       const { current, page_size, total } = data || {};
       const {
         data: { data: listData },
-      } = await getList({ current: current ?? 1, page_size: page_size ?? 10 });
+      } = await getList({
+        current: current ?? 1,
+        page_size: page_size ?? 10,
+        type: HouseType.collection,
+      });
       setData(
         produce(data, (draft) => {
           if (draft?.list) {
@@ -124,7 +135,7 @@ export default function Index() {
       if (!objStyle.transform) {
         objStyle.transform = "";
       }
-      objStyle.transform += `translateX(-95px)`;
+      objStyle.transform += `translateX(-95pxpx)`;
     }
 
     return objStyle;

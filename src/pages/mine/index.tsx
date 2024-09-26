@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { useDidShow } from "@tarojs/taro";
+import { useDidShow, navigateTo } from "@tarojs/taro";
 import { View, Image, Input, Button } from "@tarojs/components";
 import { getProfile } from "@/service/user/getProfile";
 import { exceptionBiz } from "@/lib/utils";
 import { ProfileData } from "@/service/user/Profile";
+import position from "@/assets/icon/position.svg";
+import vs from "@/assets/icon/vs.svg";
+import love from "@/assets/icon/love.svg";
+import star from "@/assets/icon/star_fill.svg";
+import more from "@/assets/icon/more.svg";
 import styles from "./styles.module.less";
 
 export default function Mine() {
@@ -29,6 +34,14 @@ export default function Mine() {
   // 取消
   const handleCancel = async () => {
     setShowBtn(false);
+  };
+
+  const handleNav2Like = () => {
+    navigateTo({ url: "/pages/like/index" });
+  };
+
+  const hanldeNav2Collection = () => {
+    navigateTo({ url: "/pages/collection/index" });
   };
 
   return (
@@ -59,20 +72,31 @@ export default function Mine() {
       </View>
       <View className={styles.list}>
         <View className={styles["list-item"]}>
-          <View>定位</View>
-          <View></View>
+          <View className={styles["list-item-left"]}>
+            <Image src={position} style={{ width: 20, height: 20 }} /> 定位
+            <View className={styles["list-item-user"]}>
+              {profile?.house_info_address}
+            </View>
+          </View>
+          <Image src={more} style={{ width: 20, height: 20 }} />
+        </View>
+        <View className={styles["list-item"]} onClick={handleNav2Like}>
+          <View className={styles["list-item-left"]}>
+            <Image src={love} style={{ width: 20, height: 20 }} /> 点赞
+          </View>
+          <Image src={more} style={{ width: 20, height: 20 }} />
+        </View>
+        <View className={styles["list-item"]} onClick={hanldeNav2Collection}>
+          <View className={styles["list-item-left"]}>
+            <Image src={star} style={{ width: 20, height: 20 }} /> 收藏
+          </View>
+          <Image src={more} style={{ width: 20, height: 20 }} />
         </View>
         <View className={styles["list-item"]}>
-          <View>点赞</View>
-          <View></View>
-        </View>
-        <View className={styles["list-item"]}>
-          <View>收藏</View>
-          <View></View>
-        </View>
-        <View className={styles["list-item"]}>
-          <View>对比</View>
-          <View></View>
+          <View className={styles["list-item-left"]}>
+            <Image src={vs} style={{ width: 20, height: 20 }} /> 对比
+          </View>
+          <Image src={more} style={{ width: 20, height: 20 }} />
         </View>
       </View>
     </View>

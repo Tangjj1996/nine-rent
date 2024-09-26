@@ -16,3 +16,19 @@ export const postCancelLike = (data: LikeReq) => {
     data,
   });
 };
+
+export const postCollection = (data: LikeReq) => {
+  return request<Api<LikeData>>({
+    url: "/house/collection",
+    method: "POST",
+    data,
+  });
+};
+
+export const postCancelCollection = (data: LikeReq) => {
+  return request<Api<LikeData>>({
+    url: "/house/cancelCollection",
+    method: "POST",
+    data,
+  });
+};
