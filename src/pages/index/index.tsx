@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { produce } from "immer";
 import {
   navigateTo,
@@ -7,6 +7,7 @@ import {
   login,
   getStorageSync,
   setStorageSync,
+  useDidShow,
 } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
@@ -20,6 +21,7 @@ import { ListData } from "@/service/hourse/List";
 import styles from "./styles.module.less";
 
 export default function Index() {
+  const isLoaded = useRef(false);
   const [data, setData] = useState<ListData>();
   const [pageInfo, setPageInfo] = useState({
     loading: false,
@@ -74,11 +76,34 @@ export default function Index() {
     } catch (e) {
       exceptionBiz(e);
     } finally {
+      isLoaded.current = true;
       setPageInfo((state) => ({
         ...state,
         loading: false,
         isNextLoading: false,
       }));
+    }
+  });
+
+  useDidShow(async () => {
+    if (!isLoaded.current) return;
+    try {
+      const { current, page_size, total } = data || {};
+      const {
+        data: { data: listData },
+      } = await getList({ current: current ?? 1, page_size: page_size ?? 10 });
+      setData(
+        produce(data, (draft) => {
+          if (draft?.list) {
+            const len = listData.list.length;
+            const index = total ?? 0 - len;
+            draft.list = draft.list.slice(index);
+            draft.list = draft.list.concat(listData.list);
+          }
+        })
+      );
+    } catch (e) {
+      exceptionBiz(e);
     }
   });
 
