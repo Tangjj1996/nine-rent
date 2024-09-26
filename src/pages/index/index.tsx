@@ -7,10 +7,13 @@ import {
   login,
   getStorageSync,
   setStorageSync,
+  usePullDownRefresh,
+  stopPullDownRefresh,
 } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
+import spinner from "@/assets/icon/spinner.svg";
 import { getList } from "@/service/hourse/getList";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { exceptionBiz } from "@/lib/utils";
@@ -25,9 +28,40 @@ export default function Index() {
     loading: false,
     isNextLoading: false,
     hasMore: false,
+    isInitLoading: false,
+  });
+
+  usePullDownRefresh(async () => {
+    try {
+      setPageInfo({
+        loading: true,
+        isNextLoading: false,
+        hasMore: false,
+        isInitLoading: true,
+      });
+      const {
+        data: { data: listData },
+      } = (await getList({ current: 1, page_size: 10 })) || {};
+      useHomeStore.setState(listData);
+      setPageInfo((state) => ({
+        ...state,
+        hasMore: listData.list.length < listData.total,
+      }));
+    } catch (e) {
+      exceptionBiz(e);
+    } finally {
+      setPageInfo((state) => ({
+        ...state,
+        loading: false,
+        isNextLoading: false,
+        isInitLoading: false,
+      }));
+      stopPullDownRefresh();
+    }
   });
 
   useReachBottom(async () => {
+    console.log("onReachBottom");
     if (!pageInfo.hasMore) return;
     try {
       setPageInfo((state) => ({ ...state, isNextLoading: true }));
@@ -63,7 +97,12 @@ export default function Index() {
         const { data: loginData } = (await getLogin({ code })) || {};
         setStorageSync(LocalStorageKey.openId, loginData.data.openid);
       }
-      setPageInfo({ loading: true, isNextLoading: false, hasMore: false });
+      setPageInfo({
+        loading: true,
+        isNextLoading: false,
+        hasMore: false,
+        isInitLoading: false,
+      });
       const {
         data: { data: listData },
       } = (await getList({ current: 1, page_size: 10 })) || {};
@@ -184,6 +223,11 @@ export default function Index() {
 
   return (
     <View className={styles.page}>
+      {pageInfo.isInitLoading && (
+        <View className={styles.loading}>
+          <Image src={spinner} style={{ width: 60, height: 60 }} />
+        </View>
+      )}
       <View className={styles.index}>
         {homeStore?.list?.map(
           (
