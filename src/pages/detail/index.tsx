@@ -55,7 +55,7 @@ export default function Mine() {
         </View>
         <View className={styles["footer-collection"]}>
           <Image
-            src={detail?.is_collection ? star : starFill}
+            src={detail?.is_collection ? starFill : star}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
           {detail?.collection_count}
