@@ -135,7 +135,7 @@ export default function Index() {
       if (!objStyle.transform) {
         objStyle.transform = "";
       }
-      objStyle.transform += `translateX(-95pxpx)`;
+      objStyle.transform += `translateX(calc(-50% - 10px))`;
     }
 
     return objStyle;
