@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { useLoad } from "@tarojs/taro";
+import { produce } from "immer";
 import { View, Swiper, SwiperItem, Image } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
 import { exceptionBiz } from "@/lib/utils";
 import { DetailData } from "@/service/hourse/Detail";
+import {
+  postLike,
+  postCancelLike,
+  postCollection,
+  postCancelCollection,
+} from "@/service/hourse/postLike";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import star from "@/assets/icon/star.svg";
@@ -13,6 +20,75 @@ import styles from "./styles.module.less";
 
 export default function Mine() {
   const [detail, setDetail] = useState<DetailData>();
+
+  const handleLike = async () => {
+    if (typeof detail?.id !== "number") return;
+    try {
+      const {
+        data: { data },
+      } = await postLike({ id: detail.id });
+      if (data.id === detail.id) {
+        setDetail(
+          produce(detail, (draft) => {
+            draft.is_liked = true;
+          })
+        );
+      }
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  };
+  const handleCancelLike = async () => {
+    if (typeof detail?.id !== "number") return;
+    try {
+      const {
+        data: { data },
+      } = await postCancelLike({ id: detail.id });
+      if (data.id === detail.id) {
+        setDetail(
+          produce(detail, (draft) => {
+            draft.is_liked = false;
+          })
+        );
+      }
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  };
+  const handleCollection = async () => {
+    if (typeof detail?.id !== "number") return;
+    try {
+      const {
+        data: { data },
+      } = await postCollection({ id: detail.id });
+      if (data.id === detail.id) {
+        setDetail(
+          produce(detail, (draft) => {
+            draft.is_collection = true;
+          })
+        );
+      }
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  };
+  const hanldeCancelCollection = async () => {
+    if (typeof detail?.id !== "number") return;
+    try {
+      const {
+        data: { data },
+      } = await postCancelCollection({ id: detail.id });
+      if (data.id === detail.id) {
+        setDetail(
+          produce(detail, (draft) => {
+            draft.is_collection = false;
+          })
+        );
+      }
+    } catch (e) {
+      exceptionBiz(e);
+    }
+  };
 
   useLoad(async (param) => {
     try {
@@ -46,14 +122,22 @@ export default function Mine() {
         ))}
       </View>
       <View className={styles.footer}>
-        <View className={styles["footer-like"]}>
+        <View
+          className={styles["footer-like"]}
+          onClick={detail?.is_liked ? handleCancelLike : handleLike}
+        >
           <Image
             src={detail?.is_liked ? heartFill : heart}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
           {detail?.like_count}
         </View>
-        <View className={styles["footer-collection"]}>
+        <View
+          className={styles["footer-collection"]}
+          onClick={
+            detail?.is_collection ? hanldeCancelCollection : handleCollection
+          }
+        >
           <Image
             src={detail?.is_collection ? starFill : star}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
