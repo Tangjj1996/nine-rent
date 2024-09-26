@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useLoad, useShareAppMessage, showShareMenu } from "@tarojs/taro";
+import { useLoad, useShareAppMessage, vibrateShort } from "@tarojs/taro";
 import { produce } from "immer";
 import { View, Swiper, SwiperItem, Image, Button } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
@@ -98,6 +98,7 @@ export default function Mine() {
   };
   const handleLike = async () => {
     if (typeof detail?.id !== "number") return;
+    vibrateShort();
     try {
       const {
         data: { data },
@@ -118,6 +119,7 @@ export default function Mine() {
 
   const handleCancelLike = async () => {
     if (typeof detail?.id !== "number") return;
+    vibrateShort();
     try {
       const {
         data: { data },
@@ -138,6 +140,7 @@ export default function Mine() {
 
   const handleCollection = async () => {
     if (typeof detail?.id !== "number") return;
+    vibrateShort();
     try {
       const {
         data: { data },
@@ -157,6 +160,7 @@ export default function Mine() {
 
   const hanldeCancelCollection = async () => {
     if (typeof detail?.id !== "number") return;
+    vibrateShort();
     try {
       const {
         data: { data },
@@ -223,7 +227,7 @@ export default function Mine() {
         >
           <Image
             src={detail?.is_liked ? heartFill : heart}
-            style={{ width: 20, height: 20, borderRadius: "50%" }}
+            style={{ width: 30, height: 30, borderRadius: "50%" }}
           />
           {prettyCount(detail?.like_count)}
         </View>
@@ -235,14 +239,14 @@ export default function Mine() {
         >
           <Image
             src={detail?.is_collection ? starFill : star}
-            style={{ width: 20, height: 20, borderRadius: "50%" }}
+            style={{ width: 30, height: 30, borderRadius: "50%" }}
           />
           {prettyCount(detail?.collection_count)}
         </View>
         <Button className={styles["footer-forward"]} openType="share">
           <Image
             src={forward}
-            style={{ width: 20, height: 20, borderRadius: "50%" }}
+            style={{ width: 30, height: 30, borderRadius: "50%" }}
           />
         </Button>
       </View>

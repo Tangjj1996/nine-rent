@@ -7,6 +7,7 @@ import {
   login,
   getStorageSync,
   setStorageSync,
+  vibrateShort,
 } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
@@ -141,6 +142,7 @@ export default function Index() {
    */
   const handleLiked = async (e: ITouchEvent, id: number) => {
     e.stopPropagation();
+    vibrateShort();
     try {
       const {
         data: { data: listData },
@@ -167,6 +169,7 @@ export default function Index() {
    */
   const handleCancelLiked = async (e: ITouchEvent, id: number) => {
     e.stopPropagation();
+    vibrateShort();
     try {
       const {
         data: { data: listData },
