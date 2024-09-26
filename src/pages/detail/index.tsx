@@ -3,7 +3,7 @@ import { useLoad } from "@tarojs/taro";
 import { produce } from "immer";
 import { View, Swiper, SwiperItem, Image } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
-import { exceptionBiz } from "@/lib/utils";
+import { exceptionBiz, prettyCount } from "@/lib/utils";
 import { DetailData } from "@/service/hourse/Detail";
 import {
   postLike,
@@ -216,7 +216,7 @@ export default function Mine() {
             src={detail?.is_liked ? heartFill : heart}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-          {detail?.like_count}
+          {prettyCount(detail?.like_count)}
         </View>
         <View
           className={styles["footer-collection"]}
@@ -228,7 +228,7 @@ export default function Mine() {
             src={detail?.is_collection ? starFill : star}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-          {detail?.collection_count}
+          {prettyCount(detail?.collection_count)}
         </View>
         <View className={styles["footer-forward"]}>
           <Image

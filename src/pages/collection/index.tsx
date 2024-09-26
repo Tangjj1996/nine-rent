@@ -14,7 +14,7 @@ import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { HouseType } from "@/service/hourse/shared";
-import { exceptionBiz } from "@/lib/utils";
+import { exceptionBiz, prettyCount } from "@/lib/utils";
 import { LocalStorageKey } from "@/enums";
 import { getLogin } from "@/service/user/login";
 import { useCollectionStore } from "@/store/collectionStore";
@@ -223,7 +223,7 @@ export default function Index() {
                     src={is_liked ? heartFill : heart}
                     style={{ width: 20, height: 20, borderRadius: "50%" }}
                   />
-                  {like_count}
+                  {prettyCount(like_count)}
                 </View>
               </View>
             </View>
