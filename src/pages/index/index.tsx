@@ -183,44 +183,46 @@ export default function Index() {
   };
 
   return (
-    <View className={styles.index}>
-      {homeStore?.list?.map(
-        (
-          { key, id, cover, title, avatar, nick_name, is_liked, like_count },
-          index
-        ) => (
-          <View
-            key={key}
-            style={calcStyle(index)}
-            className={styles.item}
-            onClick={() => handleClick(id)}
-          >
-            <Image src={cover} style={clacImgStyle(index)} />
-            <View className={styles["item-text"]}>{title}</View>
-            <View className={styles["item-user"]}>
-              <View className={styles["item-user-name"]}>
-                <Image
-                  src={avatar}
-                  style={{ width: 20, height: 20, borderRadius: "50%" }}
-                />
-                <View>{nick_name}</View>
-              </View>
-              <View
-                className={styles["item-user-like"]}
-                onClick={(e) => {
-                  is_liked ? handleCancelLiked(e, id) : handleLiked(e, id);
-                }}
-              >
-                <Image
-                  src={is_liked ? heartFill : heart}
-                  style={{ width: 20, height: 20, borderRadius: "50%" }}
-                />
-                {like_count}
+    <View className={styles.page}>
+      <View className={styles.index}>
+        {homeStore?.list?.map(
+          (
+            { key, id, cover, title, avatar, nick_name, is_liked, like_count },
+            index
+          ) => (
+            <View
+              key={key}
+              style={calcStyle(index)}
+              className={styles.item}
+              onClick={() => handleClick(id)}
+            >
+              <Image src={cover} style={clacImgStyle(index)} />
+              <View className={styles["item-text"]}>{title}</View>
+              <View className={styles["item-user"]}>
+                <View className={styles["item-user-name"]}>
+                  <Image
+                    src={avatar}
+                    style={{ width: 20, height: 20, borderRadius: "50%" }}
+                  />
+                  <View>{nick_name}</View>
+                </View>
+                <View
+                  className={styles["item-user-like"]}
+                  onClick={(e) => {
+                    is_liked ? handleCancelLiked(e, id) : handleLiked(e, id);
+                  }}
+                >
+                  <Image
+                    src={is_liked ? heartFill : heart}
+                    style={{ width: 20, height: 20, borderRadius: "50%" }}
+                  />
+                  {like_count}
+                </View>
               </View>
             </View>
-          </View>
-        )
-      )}
+          )
+        )}
+      </View>
       {pageInfo.hasMore && pageInfo.isNextLoading && (
         <View className={styles.footer}>Loading</View>
       )}
