@@ -104,8 +104,8 @@ export default function Index() {
         produce(data, (draft) => {
           if (draft?.list) {
             const len = listData.list.length;
-            const index = total ?? 0 - len;
-            draft.list = draft.list.slice(index);
+            const index = (total ?? 0) - len;
+            draft.list = draft.list.slice(0, index);
             draft.list = draft.list.concat(listData.list);
           }
         })
