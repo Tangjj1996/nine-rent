@@ -231,7 +231,7 @@ export default function Index() {
         )}
       </View>
       {pageInfo.hasMore && pageInfo.isNextLoading && (
-        <View className={styles.footer}>Loading</View>
+        <View className={styles.footer}>加载中...</View>
       )}
       {!pageInfo.hasMore && !pageInfo.loading && (
         <View className={styles.footer}>没有更多了～</View>
