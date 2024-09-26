@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { produce } from "immer";
 import {
   navigateTo,
@@ -7,7 +7,6 @@ import {
   login,
   getStorageSync,
   setStorageSync,
-  useDidShow,
 } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
@@ -15,15 +14,14 @@ import heartFill from "@/assets/icon/heart-fill.svg";
 import { getList } from "@/service/hourse/getList";
 import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { HouseType } from "@/service/hourse/shared";
-import { exceptionBiz } from "@/lib/utils";
+import { exceptionBiz, prettyCount } from "@/lib/utils";
 import { LocalStorageKey } from "@/enums";
 import { getLogin } from "@/service/user/login";
-import { ListData } from "@/service/hourse/List";
+import { useCollectionStore } from "@/store/collectionStore";
 import styles from "./styles.module.less";
 
 export default function Index() {
-  const isLoaded = useRef(false);
-  const [data, setData] = useState<ListData>();
+  const collectionStore = useCollectionStore();
   const [pageInfo, setPageInfo] = useState({
     loading: false,
     isNextLoading: false,
@@ -37,20 +35,21 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await getList({
-        current: data?.current! + 1,
-        page_size: data?.page_size!,
+        current: collectionStore?.current! + 1,
+        page_size: collectionStore?.page_size!,
         type: HouseType.collection,
       });
-      setData((state) => ({
+      useCollectionStore.setState((state) => ({
         current: listData.current,
         page_size: listData.page_size,
         total: listData.total,
-        list: state?.list.concat(listData.list) ?? [],
+        list: state?.list?.concat(listData.list) ?? [],
       }));
       setPageInfo((state) => ({
         ...state,
         hasMore:
-          (data?.list.length ?? 0) + listData.list.length < listData.total,
+          (collectionStore?.list?.length ?? 0) + listData.list.length <
+          listData.total,
       }));
     } catch (e) {
       exceptionBiz(e);
@@ -75,7 +74,7 @@ export default function Index() {
           page_size: 10,
           type: HouseType.collection,
         })) || {};
-      setData(listData);
+      useCollectionStore.setState(listData);
       setPageInfo((state) => ({
         ...state,
         hasMore: listData.list.length < listData.total,
@@ -83,38 +82,11 @@ export default function Index() {
     } catch (e) {
       exceptionBiz(e);
     } finally {
-      isLoaded.current = true;
       setPageInfo((state) => ({
         ...state,
         loading: false,
         isNextLoading: false,
       }));
-    }
-  });
-
-  useDidShow(async () => {
-    if (!isLoaded.current) return;
-    try {
-      const { current, page_size, total } = data || {};
-      const {
-        data: { data: listData },
-      } = await getList({
-        current: current ?? 1,
-        page_size: page_size ?? 10,
-        type: HouseType.collection,
-      });
-      setData(
-        produce(data, (draft) => {
-          if (draft?.list) {
-            const len = listData.list.length;
-            const index = total ?? 0 - len;
-            draft.list = draft.list.slice(index);
-            draft.list = draft.list.concat(listData.list);
-          }
-        })
-      );
-    } catch (e) {
-      exceptionBiz(e);
     }
   });
 
@@ -131,11 +103,11 @@ export default function Index() {
       objStyle.transform = `translateY(-100px)`;
     }
 
-    if (index === data?.list.length! - 1 && index % 2 === 0) {
+    if (index === collectionStore?.list?.length! - 1 && index % 2 === 0) {
       if (!objStyle.transform) {
         objStyle.transform = "";
       }
-      objStyle.transform += `translateX(-95pxpx)`;
+      objStyle.transform += `translateX(calc(-50% - 10px))`;
     }
 
     return objStyle;
@@ -161,7 +133,7 @@ export default function Index() {
    */
   const handleClick = (id: number) => {
     navigateTo({
-      url: `/pages/detail/index?id=${id}`,
+      url: `/pages/detail/index?id=${id}&type=${HouseType.collection}`,
     });
   };
 
@@ -176,9 +148,9 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await postLike({ id });
-      setData(
-        produce(data, (draft) => {
-          draft?.list.forEach((item) => {
+      useCollectionStore.setState(
+        produce(collectionStore, (draft) => {
+          draft?.list?.forEach((item) => {
             if (item.id === listData.id) {
               item.is_liked = true;
               item.like_count++;
@@ -202,9 +174,9 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await postCancelLike({ id });
-      setData(
-        produce(data, (draft) => {
-          draft?.list.forEach((item) => {
+      useCollectionStore.setState(
+        produce(collectionStore, (draft) => {
+          draft?.list?.forEach((item) => {
             if (item.id === listData.id) {
               item.is_liked = false;
               item.like_count--;
@@ -218,46 +190,48 @@ export default function Index() {
   };
 
   return (
-    <View className={styles.index}>
-      {data?.list?.map(
-        (
-          { key, id, cover, title, avatar, nick_name, is_liked, like_count },
-          index
-        ) => (
-          <View
-            key={key}
-            style={calcStyle(index)}
-            className={styles.item}
-            onClick={() => handleClick(id)}
-          >
-            <Image src={cover} style={clacImgStyle(index)} />
-            <View className={styles["item-text"]}>{title}</View>
-            <View className={styles["item-user"]}>
-              <View className={styles["item-user-name"]}>
-                <Image
-                  src={avatar}
-                  style={{ width: 20, height: 20, borderRadius: "50%" }}
-                />
-                <View>{nick_name}</View>
-              </View>
-              <View
-                className={styles["item-user-like"]}
-                onClick={(e) => {
-                  is_liked ? handleCancelLiked(e, id) : handleLiked(e, id);
-                }}
-              >
-                <Image
-                  src={is_liked ? heartFill : heart}
-                  style={{ width: 20, height: 20, borderRadius: "50%" }}
-                />
-                {like_count}
+    <View className={styles.page}>
+      <View className={styles.index}>
+        {collectionStore?.list?.map(
+          (
+            { key, id, cover, title, avatar, nick_name, is_liked, like_count },
+            index
+          ) => (
+            <View
+              key={key}
+              style={calcStyle(index)}
+              className={styles.item}
+              onClick={() => handleClick(id)}
+            >
+              <Image src={cover} style={clacImgStyle(index)} />
+              <View className={styles["item-text"]}>{title}</View>
+              <View className={styles["item-user"]}>
+                <View className={styles["item-user-name"]}>
+                  <Image
+                    src={avatar}
+                    style={{ width: 20, height: 20, borderRadius: "50%" }}
+                  />
+                  <View>{nick_name}</View>
+                </View>
+                <View
+                  className={styles["item-user-like"]}
+                  onClick={(e) => {
+                    is_liked ? handleCancelLiked(e, id) : handleLiked(e, id);
+                  }}
+                >
+                  <Image
+                    src={is_liked ? heartFill : heart}
+                    style={{ width: 20, height: 20, borderRadius: "50%" }}
+                  />
+                  {prettyCount(like_count)}
+                </View>
               </View>
             </View>
-          </View>
-        )
-      )}
+          )
+        )}
+      </View>
       {pageInfo.hasMore && pageInfo.isNextLoading && (
-        <View className={styles.footer}>Loading</View>
+        <View className={styles.footer}>加载中...</View>
       )}
       {!pageInfo.hasMore && !pageInfo.loading && (
         <View className={styles.footer}>没有更多了～</View>

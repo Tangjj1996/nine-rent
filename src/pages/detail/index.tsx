@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useLoad } from "@tarojs/taro";
+import { useState, useRef } from "react";
+import { useLoad, useShareAppMessage, showShareMenu } from "@tarojs/taro";
 import { produce } from "immer";
-import { View, Swiper, SwiperItem, Image } from "@tarojs/components";
+import { View, Swiper, SwiperItem, Image, Button } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
-import { exceptionBiz } from "@/lib/utils";
+import { exceptionBiz, prettyCount } from "@/lib/utils";
 import { DetailData } from "@/service/hourse/Detail";
 import {
   postLike,
@@ -11,6 +11,10 @@ import {
   postCollection,
   postCancelCollection,
 } from "@/service/hourse/postLike";
+import { useHomeStore } from "@/store/homeStore";
+import { useLikeStore } from "@/store/likeStore";
+import { useCollectionStore } from "@/store/collectionStore";
+import { HouseType } from "@/service/hourse/shared";
 import heart from "@/assets/icon/heart.svg";
 import heartFill from "@/assets/icon/heart-fill.svg";
 import star from "@/assets/icon/star.svg";
@@ -19,8 +23,79 @@ import forward from "@/assets/icon/forward.svg";
 import styles from "./styles.module.less";
 
 export default function Mine() {
+  const parentType = useRef<HouseType>();
+  const idRef = useRef();
   const [detail, setDetail] = useState<DetailData>();
 
+  const setParentData = ({
+    id,
+    increase,
+    decrease,
+  }: {
+    id: number;
+    increase: boolean;
+    decrease: boolean;
+  }) => {
+    if (parentType.current === HouseType.like) {
+      useLikeStore.setState(
+        produce((state) => {
+          state.list?.forEach((item) => {
+            if (item.id === id) {
+              if (increase) {
+                item.is_liked = true;
+                item.like_count++;
+              }
+
+              if (decrease) {
+                item.is_liked = false;
+                item.like_count--;
+              }
+            }
+          });
+        })
+      );
+      return;
+    }
+
+    if (parentType.current === HouseType.collection) {
+      useCollectionStore.setState(
+        produce((state) => {
+          state.list?.forEach((item) => {
+            if (item.id === id) {
+              if (increase) {
+                item.is_liked = true;
+                item.like_count++;
+              }
+
+              if (decrease) {
+                item.is_liked = false;
+                item.like_count--;
+              }
+            }
+          });
+        })
+      );
+      return;
+    }
+
+    useHomeStore.setState(
+      produce((state) => {
+        state.list?.forEach((item) => {
+          if (item.id === id) {
+            if (increase) {
+              item.is_liked = true;
+              item.like_count++;
+            }
+
+            if (decrease) {
+              item.is_liked = false;
+              item.like_count--;
+            }
+          }
+        });
+      })
+    );
+  };
   const handleLike = async () => {
     if (typeof detail?.id !== "number") return;
     try {
@@ -34,6 +109,7 @@ export default function Mine() {
             draft.like_count++;
           })
         );
+        setParentData({ id: data.id, increase: true, decrease: false });
       }
     } catch (e) {
       exceptionBiz(e);
@@ -53,6 +129,7 @@ export default function Mine() {
             draft.like_count--;
           })
         );
+        setParentData({ id: data.id, increase: false, decrease: true });
       }
     } catch (e) {
       exceptionBiz(e);
@@ -99,7 +176,11 @@ export default function Mine() {
 
   useLoad(async (param) => {
     try {
-      const { id } = param;
+      const { id, type } = param;
+      idRef.current = id;
+      if (type) {
+        parentType.current = +type;
+      }
       const {
         data: { data: detailData },
       } = (await getDetail({ id })) || {};
@@ -107,6 +188,13 @@ export default function Mine() {
     } catch (e) {
       exceptionBiz(e);
     }
+  });
+
+  useShareAppMessage(() => {
+    return {
+      title: "精品租房，快来看一下吧~",
+      path: `/pages/detail/index?id=${idRef.current}`,
+    };
   });
 
   return (
@@ -137,7 +225,7 @@ export default function Mine() {
             src={detail?.is_liked ? heartFill : heart}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-          {detail?.like_count}
+          {prettyCount(detail?.like_count)}
         </View>
         <View
           className={styles["footer-collection"]}
@@ -149,14 +237,14 @@ export default function Mine() {
             src={detail?.is_collection ? starFill : star}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-          {detail?.collection_count}
+          {prettyCount(detail?.collection_count)}
         </View>
-        <View className={styles["footer-forward"]}>
+        <Button className={styles["footer-forward"]} openType="share">
           <Image
             src={forward}
             style={{ width: 20, height: 20, borderRadius: "50%" }}
           />
-        </View>
+        </Button>
       </View>
     </View>
   );
