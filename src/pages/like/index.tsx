@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { produce } from "immer";
 import {
   navigateTo,
@@ -7,7 +7,6 @@ import {
   login,
   getStorageSync,
   setStorageSync,
-  useDidShow,
 } from "@tarojs/taro";
 import { View, Image, ITouchEvent } from "@tarojs/components";
 import heart from "@/assets/icon/heart.svg";
@@ -18,12 +17,11 @@ import { postLike, postCancelLike } from "@/service/hourse/postLike";
 import { exceptionBiz } from "@/lib/utils";
 import { LocalStorageKey } from "@/enums";
 import { getLogin } from "@/service/user/login";
-import { ListData } from "@/service/hourse/List";
+import { useLikeStore } from "@/store/likeStore";
 import styles from "./styles.module.less";
 
 export default function Index() {
-  const isLoaded = useRef(false);
-  const [data, setData] = useState<ListData>();
+  const likeStore = useLikeStore();
   const [pageInfo, setPageInfo] = useState({
     loading: false,
     isNextLoading: false,
@@ -37,20 +35,21 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await getList({
-        current: data?.current! + 1,
-        page_size: data?.page_size!,
+        current: likeStore?.current! + 1,
+        page_size: likeStore?.page_size!,
         type: HouseType.like,
       });
-      setData((state) => ({
+      useLikeStore.setState((state) => ({
         current: listData.current,
         page_size: listData.page_size,
         total: listData.total,
-        list: state?.list.concat(listData.list) ?? [],
+        list: state?.list?.concat(listData.list) ?? [],
       }));
       setPageInfo((state) => ({
         ...state,
         hasMore:
-          (data?.list.length ?? 0) + listData.list.length < listData.total,
+          (likeStore?.list?.length ?? 0) + listData.list.length <
+          listData.total,
       }));
     } catch (e) {
       exceptionBiz(e);
@@ -72,7 +71,7 @@ export default function Index() {
       } =
         (await getList({ current: 1, page_size: 10, type: HouseType.like })) ||
         {};
-      setData(listData);
+      useLikeStore.setState(listData);
       setPageInfo((state) => ({
         ...state,
         hasMore: listData.list.length < listData.total,
@@ -80,7 +79,6 @@ export default function Index() {
     } catch (e) {
       exceptionBiz(e);
     } finally {
-      isLoaded.current = true;
       setPageInfo((state) => ({
         ...state,
         loading: false,
@@ -88,32 +86,6 @@ export default function Index() {
       }));
     }
   });
-
-  // useDidShow(async () => {
-  //   if (!isLoaded.current) return;
-  //   try {
-  //     const { current, page_size, total } = data || {};
-  //     const {
-  //       data: { data: listData },
-  //     } = await getList({
-  //       current: current ?? 1,
-  //       page_size: page_size ?? 10,
-  //       type: HouseType.like,
-  //     });
-  //     setData(
-  //       produce(data, (draft) => {
-  //         if (draft?.list) {
-  //           const len = listData.list.length;
-  //           const index = (total ?? 0) - len;
-  //           draft.list = draft.list.slice(0, index);
-  //           draft.list = draft.list.concat(listData.list);
-  //         }
-  //       })
-  //     );
-  //   } catch (e) {
-  //     exceptionBiz(e);
-  //   }
-  // });
 
   const calcStyle = (index: number): React.CSSProperties => {
     const objStyle: React.CSSProperties = {};
@@ -128,7 +100,7 @@ export default function Index() {
       objStyle.transform = `translateY(-100px)`;
     }
 
-    if (index === data?.list.length! - 1 && index % 2 === 0) {
+    if (index === likeStore?.list?.length! - 1 && index % 2 === 0) {
       if (!objStyle.transform) {
         objStyle.transform = "";
       }
@@ -173,9 +145,9 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await postLike({ id });
-      setData(
-        produce(data, (draft) => {
-          draft?.list.forEach((item) => {
+      useLikeStore.setState(
+        produce(likeStore, (draft) => {
+          draft?.list?.forEach((item) => {
             if (item.id === listData.id) {
               item.is_liked = true;
               item.like_count++;
@@ -199,9 +171,9 @@ export default function Index() {
       const {
         data: { data: listData },
       } = await postCancelLike({ id });
-      setData(
-        produce(data, (draft) => {
-          draft?.list.forEach((item) => {
+      useLikeStore.setState(
+        produce(likeStore, (draft) => {
+          draft?.list?.forEach((item) => {
             if (item.id === listData.id) {
               item.is_liked = false;
               item.like_count--;
@@ -216,7 +188,7 @@ export default function Index() {
 
   return (
     <View className={styles.index}>
-      {data?.list?.map(
+      {likeStore?.list?.map(
         (
           { key, id, cover, title, avatar, nick_name, is_liked, like_count },
           index

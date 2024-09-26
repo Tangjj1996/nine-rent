@@ -1,3 +1,6 @@
+import { ListData } from "@/service/hourse/List";
 import { create } from "zustand";
 
-export const useCollectionStore = create()((set) => {});
+export type CollectionStore = Partial<ListData>;
+
+export const useCollectionStore = create<CollectionStore>()((set) => ({}));

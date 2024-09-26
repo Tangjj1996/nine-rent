@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { produce } from "immer";
 import {
   navigateTo,
@@ -20,7 +20,6 @@ import { useHomeStore } from "@/store/homeStore";
 import styles from "./styles.module.less";
 
 export default function Index() {
-  const isLoaded = useRef(false);
   const homeStore = useHomeStore();
   const [pageInfo, setPageInfo] = useState({
     loading: false,
@@ -76,7 +75,6 @@ export default function Index() {
     } catch (e) {
       exceptionBiz(e);
     } finally {
-      isLoaded.current = true;
       setPageInfo((state) => ({
         ...state,
         loading: false,
