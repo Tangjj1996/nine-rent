@@ -1,6 +1,9 @@
+import { HouseType } from "./shared";
+
 export interface ListReq {
   current: number;
   page_size: number;
+  type?: HouseType;
 }
 
 export interface ListPageData {

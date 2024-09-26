@@ -9,7 +9,7 @@ const baseUrl = (() => {
   if (isDev()) {
     return "http://localhost:3001/api";
   }
-  return "https://nine-rent.jianjie.fun/api";
+  return "https://rent.jianjie.fun/api";
 })();
 
 export const request = async <T, U = any>(optoins: RequestOptions<T, U>) => {

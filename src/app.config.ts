@@ -4,6 +4,8 @@ export default defineAppConfig({
     "pages/search/index",
     "pages/mine/index",
     "pages/detail/index",
+    "pages/like/index",
+    "pages/collection/index",
   ],
   window: {
     backgroundTextStyle: "light",
