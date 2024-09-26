@@ -22,12 +22,12 @@ export default defineAppConfig({
         iconPath: "./assets/icon/house.png",
         selectedIconPath: "./assets/icon/house_blue.png",
       },
-      {
-        pagePath: "pages/search/index",
-        text: "搜索",
-        iconPath: "./assets/icon/search.png",
-        selectedIconPath: "./assets/icon/search_blue.png",
-      },
+      // {
+      //   pagePath: "pages/search/index",
+      //   text: "搜索",
+      //   iconPath: "./assets/icon/search.png",
+      //   selectedIconPath: "./assets/icon/search_blue.png",
+      // },
       {
         pagePath: "pages/mine/index",
         text: "我的",
