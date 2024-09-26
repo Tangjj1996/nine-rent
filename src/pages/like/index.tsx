@@ -89,31 +89,31 @@ export default function Index() {
     }
   });
 
-  useDidShow(async () => {
-    if (!isLoaded.current) return;
-    try {
-      const { current, page_size, total } = data || {};
-      const {
-        data: { data: listData },
-      } = await getList({
-        current: current ?? 1,
-        page_size: page_size ?? 10,
-        type: HouseType.like,
-      });
-      setData(
-        produce(data, (draft) => {
-          if (draft?.list) {
-            const len = listData.list.length;
-            const index = (total ?? 0) - len;
-            draft.list = draft.list.slice(0, index);
-            draft.list = draft.list.concat(listData.list);
-          }
-        })
-      );
-    } catch (e) {
-      exceptionBiz(e);
-    }
-  });
+  // useDidShow(async () => {
+  //   if (!isLoaded.current) return;
+  //   try {
+  //     const { current, page_size, total } = data || {};
+  //     const {
+  //       data: { data: listData },
+  //     } = await getList({
+  //       current: current ?? 1,
+  //       page_size: page_size ?? 10,
+  //       type: HouseType.like,
+  //     });
+  //     setData(
+  //       produce(data, (draft) => {
+  //         if (draft?.list) {
+  //           const len = listData.list.length;
+  //           const index = (total ?? 0) - len;
+  //           draft.list = draft.list.slice(0, index);
+  //           draft.list = draft.list.concat(listData.list);
+  //         }
+  //       })
+  //     );
+  //   } catch (e) {
+  //     exceptionBiz(e);
+  //   }
+  // });
 
   const calcStyle = (index: number): React.CSSProperties => {
     const objStyle: React.CSSProperties = {};
