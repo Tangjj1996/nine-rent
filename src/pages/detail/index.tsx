@@ -1,5 +1,10 @@
 import { useState, useRef } from "react";
-import { useLoad, useShareAppMessage, vibrateShort } from "@tarojs/taro";
+import {
+  useLoad,
+  useShareAppMessage,
+  vibrateShort,
+  previewImage,
+} from "@tarojs/taro";
 import { produce } from "immer";
 import { View, Swiper, SwiperItem, Image, Button } from "@tarojs/components";
 import { getDetail } from "@/service/hourse/getDetail";
@@ -178,6 +183,13 @@ export default function Mine() {
     }
   };
 
+  const handlePreviewImg = (current: string, urls: string[]) => {
+    previewImage({
+      current,
+      urls,
+    });
+  };
+
   useLoad(async (param) => {
     try {
       const { id, type } = param;
@@ -206,7 +218,13 @@ export default function Mine() {
       <View className={styles.header}>{detail?.avatar}</View>
       <Swiper indicatorDots style={{ height: 500 }}>
         {detail?.swiper.map((url, index) => (
-          <SwiperItem key={index} style={{ height: 500 }}>
+          <SwiperItem
+            key={index}
+            style={{ height: 500 }}
+            onClick={() => {
+              handlePreviewImg(url, detail.swiper);
+            }}
+          >
             <Image style={{ width: "100%", height: 500 }} src={url} />
           </SwiperItem>
         ))}
